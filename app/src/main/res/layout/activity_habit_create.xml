@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <EditText
+            android:id="@+id/et_habit_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/margin_large"
+            android:background="@android:color/transparent"
+            android:text="매일 10분이상 독서하기"
+            android:hint="습관 이름을 입력!"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/margin_large">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="날짜"/>
+            <Switch
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/margin_large">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="알림설정"/>
+            <Switch
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5" />
+        </LinearLayout>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
