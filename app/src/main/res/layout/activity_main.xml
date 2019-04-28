@@ -22,7 +22,7 @@
                     android:id="@+id/toolbar_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="습관마스터"
+                    android:text="H A B I T"
                     android:textSize="@dimen/text_normal"
                     android:layout_gravity="center"
                     android:textColor="@color/white"/>
@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".activity.MainActivity">
-            <android.support.v4.view.ViewPager
+            <team5.class004.android.widget.SwipeDisabledViewPager
                 android:id="@+id/viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

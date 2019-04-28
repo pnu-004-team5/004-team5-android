@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">My Application</string>
-    <string name="menu_main_habit_list">습관</string>
+    <string name="menu_main_habit_list">내 습관</string>
+    <string name="menu_main_explore">탐색</string>
+    <string name="menu_main_profile">프로필</string>
     <string name="settings">설정</string>
     <string name="complete">완료</string>
-    <string name="test1">test1</string>
-    <string name="test2">test2</string>
     <string name="action_settings">Settings</string>
 </resources>

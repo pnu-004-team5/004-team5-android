@@ -10,13 +10,16 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import team5.class004.android.R;
 import team5.class004.android.databinding.ActivityMainBinding;
+import team5.class004.android.fragment.ExploreFragment;
 import team5.class004.android.fragment.HabitListFragment;
+import team5.class004.android.fragment.MyProfileFragment;
 import team5.class004.android.utils.Utils;
 
 public class MainActivity extends BaseActivity {
@@ -41,6 +44,7 @@ public class MainActivity extends BaseActivity {
 
         activityBinding.viewpager.setAdapter(new pagerAdapter(getSupportFragmentManager()));
         activityBinding.viewpager.setCurrentItem(0);
+
 
         activityBinding.bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -98,9 +102,9 @@ public class MainActivity extends BaseActivity {
                 case 0:
                     return new HabitListFragment();
                 case 1:
-                    return new HabitListFragment();
+                    return new ExploreFragment();
                 case 2:
-                    return new HabitListFragment();
+                    return new MyProfileFragment();
                 default:
                     return null;
             }

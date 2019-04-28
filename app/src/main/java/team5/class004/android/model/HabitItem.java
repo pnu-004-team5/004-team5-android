@@ -1,13 +1,16 @@
 package team5.class004.android.model;
 
-public class HabitItem {
-    public String _id;
-    public String brand;
-    public String title;
-    public String content;
-    public String image;
-    public String type;
-    public int shippingPrice;
-    public int level;
-//    public ShoppingProductItem shoppingProduct;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
+public class HabitItem implements Serializable {
+    public String id;
+    public String name;
+    public String fromDate;
+    public String toDate;
+    public String completeDate;
+    public String memo;
+    public String color;
 }
