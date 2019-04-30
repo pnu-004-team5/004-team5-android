@@ -15,6 +15,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -38,7 +41,6 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
     View rootView;
     FragmentMyProfileBinding fragmentBinding;
     Activity mActivity;
-    ArrayList<HabitItem> habitItems = new ArrayList<>();
     LoadingDialog dialog;
 
 
@@ -52,6 +54,7 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
         super.onCreate(savedInstanceState);
         mActivity = getActivity();
         dialog = new LoadingDialog(mActivity);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -71,34 +74,79 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
 
     @Override
     public void onRefresh() {
-        refresh();
+        update();
     }
 
     void refresh() {
-//        fragmentBinding.swipeRefreshLayout.setRefreshing(true);
-//        HashMap<String, String> params = new HashMap<>();
-////        params.put("level", String.valueOf(boxLevel));
-//        GlobalApp.getInstance().restClient.api().getMyHabits(params).enqueue(new Callback<ArrayList<HabitItem>>()
-//        {
-//            @Override
-//            public void onResponse(@NonNull Call<ArrayList<HabitItem>> call, @NonNull Response<ArrayList<HabitItem>> response)
-//            {
-//                if (response.isSuccessful() && response.body() != null)
-//                {
-//                    habitItems = response.body();
-//                    fragmentBinding.recyclerView.getAdapter().notifyDataSetChanged();
-//                }
-//                fragmentBinding.swipeRefreshLayout.setRefreshing(false);
-//            }
-//
-//            @Override
-//            public void onFailure(@NonNull Call<ArrayList<HabitItem>> call, @NonNull Throwable t)
-//            {
-//                fragmentBinding.swipeRefreshLayout.setRefreshing(false);
-//                t.printStackTrace();
-//            }
-//        });
+        fragmentBinding.swipeRefreshLayout.setRefreshing(true);
+        HashMap<String, String> params = new HashMap<>();
+//        params.put("level", String.valueOf(boxLevel));
+        GlobalApp.getInstance().restClient.api().getMyHabits(params).enqueue(new Callback<ArrayList<HabitItem>>()
+        {
+            @Override
+            public void onResponse(@NonNull Call<ArrayList<HabitItem>> call, @NonNull Response<ArrayList<HabitItem>> response)
+            {
+                if (response.isSuccessful() && response.body() != null)
+                {
 
+                }
+                fragmentBinding.swipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ArrayList<HabitItem>> call, @NonNull Throwable t)
+            {
+                fragmentBinding.swipeRefreshLayout.setRefreshing(false);
+                t.printStackTrace();
+            }
+        });
+
+    }
+
+    void update() {
+        showDialog();
+        HashMap<String, String> params = new HashMap<>();
+//        params.put("level", String.valueOf(boxLevel));
+        GlobalApp.getInstance().restClient.api().getMyHabits(params).enqueue(new Callback<ArrayList<HabitItem>>()
+        {
+            @Override
+            public void onResponse(@NonNull Call<ArrayList<HabitItem>> call, @NonNull Response<ArrayList<HabitItem>> response)
+            {
+                if (response.isSuccessful() && response.body() != null)
+                {
+
+                }
+                dismisslDialog();
+                Snackbar.make(fragmentBinding.getRoot(), "업데이트 되었습니다.", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ArrayList<HabitItem>> call, @NonNull Throwable t)
+            {
+                dismisslDialog();
+                Snackbar.make(fragmentBinding.getRoot(), "업데이트 중 오류 발생", Toast.LENGTH_SHORT).show();
+                t.printStackTrace();
+            }
+        });
+
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_my_profile_options, menu);
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.update) {
+            update();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     void showDialog() {

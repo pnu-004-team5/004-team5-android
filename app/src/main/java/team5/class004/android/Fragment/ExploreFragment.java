@@ -52,6 +52,8 @@ public class ExploreFragment extends Fragment implements SwipeRefreshLayout.OnRe
         super.onCreate(savedInstanceState);
         mActivity = getActivity();
         dialog = new LoadingDialog(mActivity);
+
+        setHasOptionsMenu(false);
     }
 
     @Override

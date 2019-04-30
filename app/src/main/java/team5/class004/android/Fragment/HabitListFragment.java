@@ -60,6 +60,8 @@ public class HabitListFragment extends Fragment implements SwipeRefreshLayout.On
         super.onCreate(savedInstanceState);
         mActivity = getActivity();
         dialog = new LoadingDialog(mActivity);
+
+        setHasOptionsMenu(false);
     }
 
     @Override
