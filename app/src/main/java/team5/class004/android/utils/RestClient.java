@@ -46,5 +46,10 @@ public final class RestClient extends RestBaseClient
         Call<HabitItem> doneMyHabit(@QueryMap Map<String, String> params);
         @DELETE("/habit")
         Call<HabitItem> deleteMyHabit(@QueryMap Map<String, String> params);
+
+        @GET("/user")
+        Call<ArrayList<HabitItem>> getUser(@QueryMap Map<String, String> params);
+        @PUT("/user")
+        Call<ArrayList<HabitItem>> updateUser(@QueryMap Map<String, String> params);
     }
 }
