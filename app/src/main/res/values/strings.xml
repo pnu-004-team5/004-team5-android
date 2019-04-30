@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">GetHabit</string>
     <string name="menu_main_habit_list">내 습관</string>
     <string name="menu_main_explore">탐색</string>
     <string name="menu_main_profile">프로필</string>
