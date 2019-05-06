@@ -15,6 +15,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,8 +25,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.bumptech.glide.Glide;
+import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.model.Image;
+import com.google.gson.Gson;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,9 +52,11 @@ import team5.class004.android.GlobalApp;
 import team5.class004.android.R;
 import team5.class004.android.activity.HabitDetailActivity;
 import team5.class004.android.activity.LoginActivity;
+import team5.class004.android.activity.MainActivity;
 import team5.class004.android.databinding.FragmentHabitListBinding;
 import team5.class004.android.databinding.FragmentMyProfileBinding;
 import team5.class004.android.databinding.ItemHabitListBinding;
+import team5.class004.android.interfaces.AppConstants;
 import team5.class004.android.model.HabitItem;
 import team5.class004.android.model.UserItem;
 import team5.class004.android.widget.LoadingDialog;
@@ -64,7 +84,6 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onResume() {
         super.onResume();
-        refresh();
     }
 
     @Nullable
@@ -72,6 +91,10 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         fragmentBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_profile, container, false);
         rootView = fragmentBinding.getRoot();
+
+        refresh();
+
+        fragmentBinding.swipeRefreshLayout.setOnRefreshListener(this);
 
         fragmentBinding.btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,7 +144,116 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
                 alert.show();
             }
         });
+        fragmentBinding.ivProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImagePicker.create(MyProfileFragment.this).start();
+            }
+        });
         return rootView;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, final int resultCode, Intent data) {
+        Log.e("asd", "2222222222");
+        if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
+            Image image = ImagePicker.getFirstImageOrNull(data);
+//            printImages(image);
+            uploadWithTransferUtility(image.getPath());
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void printImages(Image images) {
+        if (images == null) {
+            Log.e("asd", "asddddddddd");
+            return;
+        }
+
+        StringBuilder stringBuffer = new StringBuilder();
+        stringBuffer.append(images.getPath()).append("\n");
+//        fragmentBinding.printImage.setText(stringBuffer.toString());
+//        fragmentBinding.printImage.setOnClickListener(v -> ImageViewerActivity.start(MainActivity.this, images));
+    }
+
+    public void uploadWithTransferUtility(String path) {
+        showDialog();
+        TransferUtility transferUtility =
+                TransferUtility.builder()
+                        .context(GlobalApp.getInstance())
+                        .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
+                        .s3Client(new AmazonS3Client(AWSMobileClient.getInstance().getCredentialsProvider()))
+                        .build();
+
+        TransferObserver uploadObserver =
+                transferUtility.upload(
+                        "public/" + GlobalApp.getInstance().userItem.id + "_profile_image.jpg",
+                        new File(path), CannedAccessControlList.PublicRead);
+
+        // Attach a listener to the observer to get state update and progress notifications
+        uploadObserver.setTransferListener(new TransferListener() {
+            @Override
+            public void onStateChanged(int id, TransferState state) {
+                if (TransferState.COMPLETED == state) {
+                    Log.e("asd", "aaaaaaaaaaaaaaa");
+                    // Handle a completed upload.
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("id", GlobalApp.getInstance().userItem.id);
+                    params.put("email", fragmentBinding.etEmail.getText().toString());
+                    params.put("password", fragmentBinding.etPassword.getText().toString());
+                    params.put("name", fragmentBinding.etName.getText().toString());
+                    params.put("phone", fragmentBinding.etPhoneNumber.getText().toString());
+                    params.put("introduce", fragmentBinding.etIntroduce.getText().toString());
+                    params.put("profileImagePath", AppConstants.S3_URL + "/" + GlobalApp.getInstance().userItem.id + "_profile_image.jpg");
+                    GlobalApp.getInstance().restClient.api().updateUser(params).enqueue(new Callback<UserItem>()
+                    {
+                        @Override
+                        public void onResponse(@NonNull Call<UserItem> call, @NonNull Response<UserItem> response)
+                        {
+                            if (response.isSuccessful() && response.body() != null)
+                            {
+                                GlobalApp.getInstance().userItem = response.body();
+
+                                fragmentBinding.etEmail.setText(GlobalApp.getInstance().userItem.email);
+                                fragmentBinding.etPassword.setText(GlobalApp.getInstance().userItem.password);
+                                fragmentBinding.etName.setText(GlobalApp.getInstance().userItem.name);
+                                fragmentBinding.etPhoneNumber.setText(GlobalApp.getInstance().userItem.phone);
+                                fragmentBinding.etIntroduce.setText(GlobalApp.getInstance().userItem.introduce);
+                                Glide.with(mActivity).load(AppConstants.S3_URL + "/" + GlobalApp.getInstance().userItem.id + "_profile_image.jpg").into(fragmentBinding.ivProfile);
+                                GlobalApp.getInstance().prefs.edit().putString("user", new Gson().toJson(GlobalApp.getInstance().userItem)).apply();
+                            }
+                            dismisslDialog();
+                            fragmentBinding.swipeRefreshLayout.setRefreshing(false);
+                            Snackbar.make(fragmentBinding.getRoot(), "업데이트 되었습니다.", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<UserItem> call, @NonNull Throwable t)
+                        {
+                            dismisslDialog();
+                            fragmentBinding.swipeRefreshLayout.setRefreshing(false);
+                            Snackbar.make(fragmentBinding.getRoot(), "업데이트 중 오류 발생", Toast.LENGTH_SHORT).show();
+                            t.printStackTrace();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+                float percentDonef = ((float) bytesCurrent / (float) bytesTotal) * 100;
+                int percentDone = (int)percentDonef;
+
+                Log.e("YourActivity", "ID:" + id + " bytesCurrent: " + bytesCurrent
+                        + " bytesTotal: " + bytesTotal + " " + percentDone + "%");
+            }
+
+            @Override
+            public void onError(int id, Exception ex) {
+                // Handle errors
+            }
+
+        });
     }
 
     void logout() {
@@ -163,61 +295,94 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
 
     @Override
     public void onRefresh() {
-        update();
+        refresh();
     }
 
     void refresh() {
-        fragmentBinding.swipeRefreshLayout.setRefreshing(true);
+        showDialog();
         HashMap<String, String> params = new HashMap<>();
         params.put("email", GlobalApp.getInstance().userItem.email);
-        GlobalApp.getInstance().restClient.api().getMyHabits(params).enqueue(new Callback<ArrayList<HabitItem>>()
+        params.put("password", GlobalApp.getInstance().userItem.password);
+        GlobalApp.getInstance().restClient.api().getUser(params).enqueue(new Callback<UserItem>()
         {
             @Override
-            public void onResponse(@NonNull Call<ArrayList<HabitItem>> call, @NonNull Response<ArrayList<HabitItem>> response)
+            public void onResponse(@NonNull Call<UserItem> call, @NonNull Response<UserItem> response)
             {
                 if (response.isSuccessful() && response.body() != null)
                 {
-
+                    if(response.body().email == null) {
+                        startActivity(new Intent(mActivity, LoginActivity.class));
+                        mActivity.finish();
+                    } else if(!response.body().auth) {
+                        startActivity(new Intent(mActivity, LoginActivity.class));
+                        mActivity.finish();
+                    } else {
+                        GlobalApp.getInstance().userItem = response.body();
+                        GlobalApp.getInstance().prefs.edit().putString("user", new Gson().toJson(GlobalApp.getInstance().userItem)).apply();
+                        fragmentBinding.etEmail.setText(GlobalApp.getInstance().userItem.email);
+                        fragmentBinding.etPassword.setText(GlobalApp.getInstance().userItem.password);
+                        fragmentBinding.etName.setText(GlobalApp.getInstance().userItem.name);
+                        fragmentBinding.etPhoneNumber.setText(GlobalApp.getInstance().userItem.phone);
+                        fragmentBinding.etIntroduce.setText(GlobalApp.getInstance().userItem.introduce);
+                        Glide.with(mActivity).load(AppConstants.S3_URL + "/" + GlobalApp.getInstance().userItem.id + "_profile_image.jpg").into(fragmentBinding.ivProfile);
+                    }
                 }
-                fragmentBinding.swipeRefreshLayout.setRefreshing(false);
+                dismisslDialog();
             }
 
             @Override
-            public void onFailure(@NonNull Call<ArrayList<HabitItem>> call, @NonNull Throwable t)
+            public void onFailure(@NonNull Call<UserItem> call, @NonNull Throwable t)
             {
-                fragmentBinding.swipeRefreshLayout.setRefreshing(false);
-                t.printStackTrace();
+                try {
+                    dismisslDialog();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
-
     }
 
     void update() {
         showDialog();
         HashMap<String, String> params = new HashMap<>();
-//        params.put("level", String.valueOf(boxLevel));
-        GlobalApp.getInstance().restClient.api().getMyHabits(params).enqueue(new Callback<ArrayList<HabitItem>>()
+        params.put("id", GlobalApp.getInstance().userItem.id);
+        params.put("email", fragmentBinding.etEmail.getText().toString());
+        params.put("password", fragmentBinding.etPassword.getText().toString());
+        params.put("name", fragmentBinding.etName.getText().toString());
+        params.put("phone", fragmentBinding.etPhoneNumber.getText().toString());
+        params.put("introduce", fragmentBinding.etIntroduce.getText().toString());
+        GlobalApp.getInstance().restClient.api().updateUser(params).enqueue(new Callback<UserItem>()
         {
             @Override
-            public void onResponse(@NonNull Call<ArrayList<HabitItem>> call, @NonNull Response<ArrayList<HabitItem>> response)
+            public void onResponse(@NonNull Call<UserItem> call, @NonNull Response<UserItem> response)
             {
                 if (response.isSuccessful() && response.body() != null)
                 {
+                    GlobalApp.getInstance().userItem = response.body();
 
+                    fragmentBinding.etEmail.setText(GlobalApp.getInstance().userItem.email);
+                    fragmentBinding.etPassword.setText(GlobalApp.getInstance().userItem.password);
+                    fragmentBinding.etName.setText(GlobalApp.getInstance().userItem.name);
+                    fragmentBinding.etPhoneNumber.setText(GlobalApp.getInstance().userItem.phone);
+                    fragmentBinding.etIntroduce.setText(GlobalApp.getInstance().userItem.introduce);
+                    Glide.with(mActivity).load(AppConstants.S3_URL + "/" + GlobalApp.getInstance().userItem.id + "_profile_image.jpg").into(fragmentBinding.ivProfile);
+
+                    GlobalApp.getInstance().prefs.edit().putString("user", new Gson().toJson(GlobalApp.getInstance().userItem)).apply();
                 }
                 dismisslDialog();
+                fragmentBinding.swipeRefreshLayout.setRefreshing(false);
                 Snackbar.make(fragmentBinding.getRoot(), "업데이트 되었습니다.", Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void onFailure(@NonNull Call<ArrayList<HabitItem>> call, @NonNull Throwable t)
+            public void onFailure(@NonNull Call<UserItem> call, @NonNull Throwable t)
             {
                 dismisslDialog();
+                fragmentBinding.swipeRefreshLayout.setRefreshing(false);
                 Snackbar.make(fragmentBinding.getRoot(), "업데이트 중 오류 발생", Toast.LENGTH_SHORT).show();
                 t.printStackTrace();
             }
         });
-
     }
 
     @Override
@@ -242,10 +407,12 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
         dialog.setCancelable(false);
         dialog.getWindow().setGravity(Gravity.CENTER);
         dialog.show();
+        fragmentBinding.swipeRefreshLayout.setRefreshing(false);
     }
 
     void dismisslDialog() {
         dialog.dismiss();
+        fragmentBinding.swipeRefreshLayout.setRefreshing(false);
     }
 
 }
