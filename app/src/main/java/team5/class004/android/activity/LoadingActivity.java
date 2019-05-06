@@ -23,7 +23,7 @@ public class LoadingActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        UserItem userItem = new Gson().fromJson(GlobalApp.getInstance().prefs.getString("user", "{}"), UserItem.class);
+        UserItem userItem = new Gson().fromJson(GlobalApp.getInstance().prefs.getString("user", "{email: \"\", password: \"\"}"), UserItem.class);
         HashMap<String, String> params = new HashMap<>();
         params.put("email", userItem.email);
         params.put("password", userItem.password);

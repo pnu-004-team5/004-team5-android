@@ -33,7 +33,7 @@ public class SignupActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityBinding = DataBindingUtil.setContentView(mActivity, R.layout.activity_signup);
-        Utils.getInstance().setActionbar(mActivity, "로그인", true);
+        Utils.getInstance().setActionbar(mActivity, "회원가입", true);
         dialog = new LoadingDialog(mActivity);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
