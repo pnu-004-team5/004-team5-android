@@ -36,6 +36,8 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
 import com.google.gson.Gson;
@@ -44,6 +46,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -66,7 +69,7 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
     FragmentMyProfileBinding fragmentBinding;
     Activity mActivity;
     LoadingDialog dialog;
-
+    Random rand = new Random();
 
     public MyProfileFragment()
     {
@@ -185,9 +188,10 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
                         .s3Client(new AmazonS3Client(AWSMobileClient.getInstance().getCredentialsProvider()))
                         .build();
 
+        final String uploadKey = GlobalApp.getInstance().userItem.id + "_" + rand.nextInt(999999999) + "_profile_image.jpg";
         TransferObserver uploadObserver =
                 transferUtility.upload(
-                        "public/" + GlobalApp.getInstance().userItem.id + "_profile_image.jpg",
+                        "public/" + uploadKey,
                         new File(path), CannedAccessControlList.PublicRead);
 
         // Attach a listener to the observer to get state update and progress notifications
@@ -204,7 +208,7 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
                     params.put("name", fragmentBinding.etName.getText().toString());
                     params.put("phone", fragmentBinding.etPhoneNumber.getText().toString());
                     params.put("introduce", fragmentBinding.etIntroduce.getText().toString());
-                    params.put("profileImagePath", AppConstants.S3_URL + "/" + GlobalApp.getInstance().userItem.id + "_profile_image.jpg");
+                    params.put("profileImagePath", AppConstants.S3_URL + "/" + uploadKey);
                     GlobalApp.getInstance().restClient.api().updateUser(params).enqueue(new Callback<UserItem>()
                     {
                         @Override
@@ -219,7 +223,7 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
                                 fragmentBinding.etName.setText(GlobalApp.getInstance().userItem.name);
                                 fragmentBinding.etPhoneNumber.setText(GlobalApp.getInstance().userItem.phone);
                                 fragmentBinding.etIntroduce.setText(GlobalApp.getInstance().userItem.introduce);
-                                Glide.with(mActivity).load(AppConstants.S3_URL + "/" + GlobalApp.getInstance().userItem.id + "_profile_image.jpg").into(fragmentBinding.ivProfile);
+                                Glide.with(mActivity).load(GlobalApp.getInstance().userItem.profileImagePath).into(fragmentBinding.ivProfile);
                                 GlobalApp.getInstance().prefs.edit().putString("user", new Gson().toJson(GlobalApp.getInstance().userItem)).apply();
                             }
                             dismisslDialog();
@@ -324,7 +328,7 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
                         fragmentBinding.etName.setText(GlobalApp.getInstance().userItem.name);
                         fragmentBinding.etPhoneNumber.setText(GlobalApp.getInstance().userItem.phone);
                         fragmentBinding.etIntroduce.setText(GlobalApp.getInstance().userItem.introduce);
-                        Glide.with(mActivity).load(AppConstants.S3_URL + "/" + GlobalApp.getInstance().userItem.id + "_profile_image.jpg").into(fragmentBinding.ivProfile);
+                        Glide.with(mActivity).load(GlobalApp.getInstance().userItem.profileImagePath).into(fragmentBinding.ivProfile);
                     }
                 }
                 dismisslDialog();
@@ -365,7 +369,8 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
                     fragmentBinding.etName.setText(GlobalApp.getInstance().userItem.name);
                     fragmentBinding.etPhoneNumber.setText(GlobalApp.getInstance().userItem.phone);
                     fragmentBinding.etIntroduce.setText(GlobalApp.getInstance().userItem.introduce);
-                    Glide.with(mActivity).load(AppConstants.S3_URL + "/" + GlobalApp.getInstance().userItem.id + "_profile_image.jpg").into(fragmentBinding.ivProfile);
+                    RequestOptions myOptions = new RequestOptions();
+                    Glide.with(mActivity).load(GlobalApp.getInstance().userItem.profileImagePath).apply(myOptions).into(fragmentBinding.ivProfile);
 
                     GlobalApp.getInstance().prefs.edit().putString("user", new Gson().toJson(GlobalApp.getInstance().userItem)).apply();
                 }
