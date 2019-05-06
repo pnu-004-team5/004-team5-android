@@ -223,7 +223,8 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
                                 fragmentBinding.etName.setText(GlobalApp.getInstance().userItem.name);
                                 fragmentBinding.etPhoneNumber.setText(GlobalApp.getInstance().userItem.phone);
                                 fragmentBinding.etIntroduce.setText(GlobalApp.getInstance().userItem.introduce);
-                                Glide.with(mActivity).load(GlobalApp.getInstance().userItem.profileImagePath).into(fragmentBinding.ivProfile);
+                                RequestOptions myOptions = new RequestOptions().error(R.mipmap.ic_launcher);
+                                Glide.with(mActivity).load(GlobalApp.getInstance().userItem.profileImagePath).apply(myOptions).into(fragmentBinding.ivProfile);
                                 GlobalApp.getInstance().prefs.edit().putString("user", new Gson().toJson(GlobalApp.getInstance().userItem)).apply();
                             }
                             dismisslDialog();
@@ -328,7 +329,8 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
                         fragmentBinding.etName.setText(GlobalApp.getInstance().userItem.name);
                         fragmentBinding.etPhoneNumber.setText(GlobalApp.getInstance().userItem.phone);
                         fragmentBinding.etIntroduce.setText(GlobalApp.getInstance().userItem.introduce);
-                        Glide.with(mActivity).load(GlobalApp.getInstance().userItem.profileImagePath).into(fragmentBinding.ivProfile);
+                        RequestOptions myOptions = new RequestOptions().error(R.mipmap.ic_launcher);
+                        Glide.with(mActivity).load(GlobalApp.getInstance().userItem.profileImagePath).apply(myOptions).into(fragmentBinding.ivProfile);
                     }
                 }
                 dismisslDialog();
@@ -369,7 +371,7 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
                     fragmentBinding.etName.setText(GlobalApp.getInstance().userItem.name);
                     fragmentBinding.etPhoneNumber.setText(GlobalApp.getInstance().userItem.phone);
                     fragmentBinding.etIntroduce.setText(GlobalApp.getInstance().userItem.introduce);
-                    RequestOptions myOptions = new RequestOptions();
+                    RequestOptions myOptions = new RequestOptions().error(R.mipmap.ic_launcher);
                     Glide.with(mActivity).load(GlobalApp.getInstance().userItem.profileImagePath).apply(myOptions).into(fragmentBinding.ivProfile);
 
                     GlobalApp.getInstance().prefs.edit().putString("user", new Gson().toJson(GlobalApp.getInstance().userItem)).apply();
