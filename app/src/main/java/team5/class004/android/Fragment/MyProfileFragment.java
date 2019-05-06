@@ -1,6 +1,8 @@
 package team5.class004.android.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -31,10 +33,12 @@ import retrofit2.Response;
 import team5.class004.android.GlobalApp;
 import team5.class004.android.R;
 import team5.class004.android.activity.HabitDetailActivity;
+import team5.class004.android.activity.LoginActivity;
 import team5.class004.android.databinding.FragmentHabitListBinding;
 import team5.class004.android.databinding.FragmentMyProfileBinding;
 import team5.class004.android.databinding.ItemHabitListBinding;
 import team5.class004.android.model.HabitItem;
+import team5.class004.android.model.UserItem;
 import team5.class004.android.widget.LoadingDialog;
 
 public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -69,7 +73,92 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
         fragmentBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_profile, container, false);
         rootView = fragmentBinding.getRoot();
 
+        fragmentBinding.btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(mActivity);
+                alert.setTitle("로그아웃");
+                alert.setMessage("로그아웃 할까요?");
+                alert.setPositiveButton("네", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        logout();
+                    }
+                });
+
+                alert.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                alert.show();
+            }
+        });
+        fragmentBinding.btnRemoveAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(mActivity);
+                alert.setTitle("회원탈퇴");
+                alert.setMessage("탈퇴할까요?");
+                alert.setPositiveButton("네", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeAccount();
+                    }
+                });
+
+                alert.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                alert.show();
+            }
+        });
         return rootView;
+    }
+
+    void logout() {
+        GlobalApp.getInstance().userItem = null;
+        GlobalApp.getInstance().prefs.edit().remove("user").apply();
+        Toast.makeText(mActivity, "로그아웃 되었습니다.", Toast.LENGTH_LONG).show();
+        mActivity.startActivity(new Intent(mActivity, LoginActivity.class));
+        mActivity.finish();
+    }
+
+    void removeAccount() {
+        showDialog();
+        HashMap<String, String> params = new HashMap<>();
+        params.put("email", GlobalApp.getInstance().userItem.email);
+        GlobalApp.getInstance().restClient.api().removeUser(params).enqueue(new Callback<UserItem>()
+        {
+            @Override
+            public void onResponse(@NonNull Call<UserItem> call, @NonNull Response<UserItem> response)
+            {
+                if (response.isSuccessful() && response.body() != null)
+                {
+                    GlobalApp.getInstance().userItem = null;
+                    GlobalApp.getInstance().prefs.edit().remove("user").apply();
+                    Toast.makeText(mActivity, "탈퇴 완료 되었습니다.", Toast.LENGTH_LONG).show();
+                    mActivity.startActivity(new Intent(mActivity, LoginActivity.class));
+                    mActivity.finish();
+                }
+                dismisslDialog();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<UserItem> call, @NonNull Throwable t)
+            {
+                dismisslDialog();
+                t.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -80,7 +169,7 @@ public class MyProfileFragment extends Fragment implements SwipeRefreshLayout.On
     void refresh() {
         fragmentBinding.swipeRefreshLayout.setRefreshing(true);
         HashMap<String, String> params = new HashMap<>();
-//        params.put("level", String.valueOf(boxLevel));
+        params.put("email", GlobalApp.getInstance().userItem.email);
         GlobalApp.getInstance().restClient.api().getMyHabits(params).enqueue(new Callback<ArrayList<HabitItem>>()
         {
             @Override

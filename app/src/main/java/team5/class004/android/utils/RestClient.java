@@ -16,6 +16,7 @@ import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 import team5.class004.android.model.AbstractResponse;
 import team5.class004.android.model.HabitItem;
+import team5.class004.android.model.UserItem;
 
 /**
  * Created by sunriv on 2017. 8. 31..
@@ -47,9 +48,13 @@ public final class RestClient extends RestBaseClient
         @DELETE("/habit")
         Call<HabitItem> deleteMyHabit(@QueryMap Map<String, String> params);
 
+        @POST("/user")
+        Call<UserItem> createUser(@QueryMap Map<String, String> params);
         @GET("/user")
-        Call<ArrayList<HabitItem>> getUser(@QueryMap Map<String, String> params);
+        Call<UserItem> getUser(@QueryMap Map<String, String> params);
         @PUT("/user")
-        Call<ArrayList<HabitItem>> updateUser(@QueryMap Map<String, String> params);
+        Call<UserItem> updateUser(@QueryMap Map<String, String> params);
+        @DELETE("/user")
+        Call<UserItem> removeUser(@QueryMap Map<String, String> params);
     }
 }
