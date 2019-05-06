@@ -22,6 +22,7 @@
                     android:background="@color/colorAccent" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_profile"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_below="@id/header_bg"
@@ -37,6 +38,13 @@
                     android:orientation="vertical"
                     android:padding="@dimen/margin_large">
 
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_marginBottom="@dimen/margin_large"
+                        android:text="프로필 이미지를 변경하려면 위의 이미지를 누르세요." />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -47,7 +55,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/margin_large"
-                        android:hint="ex) abc@mail.com" />
+                        android:hint="ex) abc@mail.com"
+                        android:enabled="false"/>
 
                     <TextView
                         android:layout_width="match_parent"

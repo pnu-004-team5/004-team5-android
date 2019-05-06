@@ -56,10 +56,12 @@ public class LoginActivity extends BaseActivity {
                         {
                             if(response.body().email == null) {
                                 Toast.makeText(mActivity, "일치하는 계정이 없습니다.", Toast.LENGTH_SHORT).show();
+                            } else if(!response.body().auth) {
+                                Toast.makeText(mActivity, "이메일 인증이 완료되지 않았습니다.", Toast.LENGTH_SHORT).show();
                             } else {
                                 GlobalApp.getInstance().userItem = response.body();
-                                if(GlobalApp.getInstance().userItem != null)
-                                    GlobalApp.getInstance().prefs.edit().putString("user", new Gson().toJson(GlobalApp.getInstance().userItem)).apply();
+                                GlobalApp.getInstance().prefs.edit().putString("user", new Gson().toJson(GlobalApp.getInstance().userItem)).apply();
+                                Toast.makeText(mActivity, "로그인 완료", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(mActivity, MainActivity.class));
                                 finish();
                             }
