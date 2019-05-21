@@ -33,7 +33,7 @@ public class SignupActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityBinding = DataBindingUtil.setContentView(mActivity, R.layout.activity_signup);
-        Utils.getInstance().setActionbar(mActivity, "로그인", true);
+        Utils.getInstance().setActionbar(mActivity, "회원가입", true);
         dialog = new LoadingDialog(mActivity);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -60,6 +60,7 @@ public class SignupActivity extends BaseActivity {
                                 GlobalApp.getInstance().userItem = response.body();
                                 if(GlobalApp.getInstance().userItem != null)
                                     GlobalApp.getInstance().prefs.edit().putString("user", new Gson().toJson(GlobalApp.getInstance().userItem)).apply();
+                                Toast.makeText(mActivity, "회원가입 완료", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(mActivity, LoginActivity.class));
                                 finish();
                             }
@@ -70,6 +71,7 @@ public class SignupActivity extends BaseActivity {
                     @Override
                     public void onFailure(@NonNull Call<UserItem> call, @NonNull Throwable t)
                     {
+//                        Toast.makeText(mActivity, "이메일주소를 정확히 입력해주세요.", Toast.LENGTH_SHORT).show();
                         dismissDialog();
                         finish();
                         t.printStackTrace();
