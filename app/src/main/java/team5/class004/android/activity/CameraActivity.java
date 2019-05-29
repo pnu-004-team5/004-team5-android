@@ -641,7 +641,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraPreview
 //                ConvertRGBtoGray(mat.address(), mat.address());
                 break;
             case RED:
-
                 try {
 //                    applyColorMap(overlayColor, overlayColor, COLORMAP_HOT);
 //                ConvertRGBtoRed(mat.address(), mat.address());

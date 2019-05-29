@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,11 +15,18 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.MediaController;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import org.json.JSONArray;
 
@@ -45,14 +53,19 @@ import team5.class004.android.model.BoardDocumentItem;
 import team5.class004.android.widget.LoadingDialog;
 import team5.class004.android.widget.SmoothCheckBox;
 
-public class ExploreFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class ExploreFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, SurfaceHolder.Callback {
     View rootView;
     FragmentExploreBinding fragmentBinding;
     MainActivity mActivity;
     MyRecyclerAdapter adapter = new MyRecyclerAdapter();
     ArrayList<BoardDocumentItem> boardDocumentItems = new ArrayList<>();
     LoadingDialog dialog;
-
+    boolean hasActiveHolder;
+    MediaPlayer mediaPlayer;
+//    String currentDataSource = "http://techslides.com/demos/sample-videos/small.mp4";
+    String currentDataSource;
+    int isVideoRunning = 0;
+    SurfaceView thisSurface;
 
     public ExploreFragment()
     {
@@ -64,10 +77,51 @@ public class ExploreFragment extends Fragment implements SwipeRefreshLayout.OnRe
         super.onCreate(savedInstanceState);
         mActivity = (MainActivity)getActivity();
         dialog = new LoadingDialog(mActivity);
+        mediaPlayer = new MediaPlayer();
 
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                Log.e("ready", currentDataSource);
+                mp.start();
+            }
+        });
+//        mediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
+//
+//            @Override
+//            public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+//
+////                setFitToFillAspectRatio(mp, width, height);
+//
+//            }
+//        });
         setHasOptionsMenu(false);
     }
+//    private void setFitToFillAspectRatio(MediaPlayer mp, int videoWidth, int videoHeight)
+//    {
+//        if(mp != null)
+//        {
+//            Integer screenWidth = mActivity.getWindowManager().getDefaultDisplay().getWidth();
+//            Integer screenHeight = mActivity.getWindowManager().getDefaultDisplay().getHeight();
+//            android.view.ViewGroup.LayoutParams videoParams = getLayoutParams();
+//
+//
+//            if (videoWidth > videoHeight)
+//            {
+//                videoParams.width = screenWidth;
+//                videoParams.height = screenWidth * videoHeight / videoWidth;
+//            }
+//            else
+//            {
+//                videoParams.width = screenHeight * videoWidth / videoHeight;
+//                videoParams.height = screenHeight;
+//            }
+//
+//
+//            setLayoutParams(videoParams);
+//        }
+//    }
 
     @Override
     public void onResume() {
@@ -81,6 +135,48 @@ public class ExploreFragment extends Fragment implements SwipeRefreshLayout.OnRe
         super.onPause();
 
         refresh();
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        Log.e("dasd", "surface destryed");
+//        if(isVideoRunning == 1) {
+//            mediaPlayer.setDisplay(null);
+//        }
+//                    mediaPlayer.prepare();
+//                    mediaPlayer.start();
+//        synchronized (this) {
+//            hasActiveHolder = false;
+//
+//            synchronized(this)          {
+//                this.notifyAll();
+//            }
+//        }
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        Log.e("dasd", "surface created");
+        try {
+            Log.e("dasd", currentDataSource);
+            mediaPlayer.setDataSource(currentDataSource);
+            mediaPlayer.setDisplay(holder);
+            mediaPlayer.prepareAsync();
+            mediaPlayer.setLooping(true);
+//            mediaPlayer.start();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+//        synchronized (this) {
+//            hasActiveHolder = true;
+//            this.notifyAll();
+//        }
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+
     }
 
     @Nullable
@@ -178,8 +274,37 @@ public class ExploreFragment extends Fragment implements SwipeRefreshLayout.OnRe
         @Override
         public void onBindViewHolder(MyRecyclerAdapter.ViewHolder holder, int position) {
             try {
+//                if(isVideoRunning == 0) {
+//
+////                currentDataSource = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4";
+//                }
+                isVideoRunning = position;
+                holder.itemBinding.videoSurfaceView.getHolder().addCallback(ExploreFragment.this);
+                thisSurface = holder.itemBinding.videoSurfaceView;
 
-                holder.itemBinding.myVideoView.setVideoPath("http://techslides.com/demos/sample-videos/small.mp4");
+                currentDataSource = boardDocumentItems.get(position).videoUrl;
+                RequestOptions myOptions = new RequestOptions().error(R.mipmap.ic_launcher);
+                Glide.with(mActivity).load(GlobalApp.getInstance().userItem.profileImagePath).apply(myOptions).into(holder.itemBinding.ivProfile);
+                holder.itemBinding.tvNickname.setText(GlobalApp.getInstance().userItem.name);
+                holder.itemBinding.tvContent.setText(boardDocumentItems.get(position).content);
+//                synchronized (this) {
+//                    while (!hasActiveHolder) {
+//                        try {
+//                            this.wait();
+//                        } catch (InterruptedException e) {
+//                            //Print something
+//                        }
+//                    }
+//                    mediaPlayer.setDisplay(holder.itemBinding.videoSurfaceView.getHolder());
+//                    mediaPlayer.prepare();
+//                    mediaPlayer.start();
+//                }
+//                mediaPlayer.setDisplay(holder.itemBinding.videoSurfaceView.getHolder());
+//                mediaPlayer.prepare();
+// mediaPlayer.prepareAsync();
+
+//                holder.itemBinding.myVideoView.setVideoPath("http://techslides.com/demos/sample-videos/small.mp4");
+
 //                int color = Color.parseColor(boardDocumentItems.get(position).color);
 //                holder.itemBinding.container.setBackgroundColor(color);
 //                holder.itemBinding.tvHabitName.setText(boardDocumentItems.get(position).name);
@@ -206,6 +331,7 @@ public class ExploreFragment extends Fragment implements SwipeRefreshLayout.OnRe
 //                }
 //                holder.itemBinding.scb.setOnCheckedChangeListener(holder);
             } catch (Exception e) {
+                e.printStackTrace();
 //                holder.itemBinding.container.setBackgroundColor(colors.get(position % colors.size()));
             }
         }
@@ -231,9 +357,9 @@ public class ExploreFragment extends Fragment implements SwipeRefreshLayout.OnRe
             @Override
             public void onClick(View view) {
                 int position = getAdapterPosition();
-                Intent intent = new Intent(getContext(), HabitDetailActivity.class);
-                intent.putExtra("habitItem", boardDocumentItems.get(position));
-                startActivity(intent);
+//                Intent intent = new Intent(getContext(), HabitDetailActivity.class);
+//                intent.putExtra("habitItem", boardDocumentItems.get(position));
+//                startActivity(intent);
             }
 
             @Override
