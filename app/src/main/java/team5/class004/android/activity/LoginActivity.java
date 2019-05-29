@@ -40,6 +40,11 @@ public class LoginActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+//        if(!isValidEmail(activityBinding.etEmail.getText().toString())) {
+//            Toast.makeText(mActivity, "유효하지 않은 이메일", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+
         activityBinding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,6 +92,11 @@ public class LoginActivity extends BaseActivity {
                 finish();
             }
         });
+    }
+
+    public static boolean isValidEmail(String email) {
+        String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+        return email.matches(regex);
     }
 
     void showDialog() {

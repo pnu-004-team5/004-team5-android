@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -29,8 +30,9 @@ import team5.class004.android.utils.Utils;
 
 public class MainActivity extends BaseActivity {
     MainActivity mActivity = this;
-    ActivityMainBinding activityBinding;
+    public ActivityMainBinding activityBinding;
     MenuItem prevMenuItem;
+    int currentMenuItem = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +52,10 @@ public class MainActivity extends BaseActivity {
         activityBinding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(mActivity, HabitCreateActivity.class));
+                if(currentMenuItem == 1)
+                    startActivity(new Intent(mActivity, BoardDocumentCreateActivity.class));
+                else
+                    startActivity(new Intent(mActivity, HabitCreateActivity.class));
             }
         });
 
@@ -63,15 +68,21 @@ public class MainActivity extends BaseActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.habit_list:
-                        activityBinding.viewpager.setCurrentItem(0);
+                        activityBinding.fab.setVisibility(View.VISIBLE);
+//                        activityBinding.fab.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_add_white));
+                        currentMenuItem = 0;
                         break;
                     case R.id.test1:
-                        activityBinding.viewpager.setCurrentItem(1);
+                        activityBinding.fab.setVisibility(View.VISIBLE);
+//                        activityBinding.fab.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_videocam_black_24dp));
+                        currentMenuItem = 1;
                         break;
                     case R.id.test2:
-                        activityBinding.viewpager.setCurrentItem(2);
+                        activityBinding.fab.setVisibility(View.GONE);
+                        currentMenuItem = 2;
                         break;
                 }
+                activityBinding.viewpager.setCurrentItem(currentMenuItem);
                 return true;
             }
         });

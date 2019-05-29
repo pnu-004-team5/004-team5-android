@@ -15,6 +15,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 import team5.class004.android.model.AbstractResponse;
+import team5.class004.android.model.BoardDocumentItem;
 import team5.class004.android.model.HabitItem;
 import team5.class004.android.model.UserItem;
 
@@ -56,5 +57,10 @@ public final class RestClient extends RestBaseClient
         Call<UserItem> updateUser(@QueryMap Map<String, String> params);
         @DELETE("/user")
         Call<UserItem> removeUser(@QueryMap Map<String, String> params);
+
+        @GET("/board/documents")
+        Call<ArrayList<BoardDocumentItem>> getBoardDocuments(@QueryMap Map<String, String> params);
+        @POST("/board/document")
+        Call<BoardDocumentItem> createBoardDocument(@QueryMap Map<String, String> params);
     }
 }
