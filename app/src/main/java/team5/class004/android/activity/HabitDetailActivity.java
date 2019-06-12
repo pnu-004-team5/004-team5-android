@@ -2,15 +2,14 @@ package team5.class004.android.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -22,10 +21,8 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import org.json.JSONArray;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import team5.class004.android.R;
@@ -121,7 +118,9 @@ public class HabitDetailActivity extends BaseActivity {
         int id = item.getItemId();
 
         if (id == R.id.notification) {
-            startActivity(new Intent(HabitDetailActivity.this, HabitDetailNotificationActivity.class));
+            Intent intent = new Intent(HabitDetailActivity.this, HabitDetailNotificationActivity.class);
+            intent.putExtra("habitItem", habitItem);
+            startActivity(intent);
             return true;
         }
 

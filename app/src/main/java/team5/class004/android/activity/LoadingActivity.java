@@ -3,8 +3,7 @@ package team5.class004.android.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.widget.Toast;
+import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 

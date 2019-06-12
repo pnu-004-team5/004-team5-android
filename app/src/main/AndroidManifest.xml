@@ -34,7 +34,10 @@
         android:name=".GlobalApp">
         <service android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService" android:enabled="true" />
 
-
+        <receiver
+            android:name=".utils.AlarmReceiver"
+            android:enabled="true"
+            android:exported="false"/>
         <activity android:name=".activity.CameraActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:configChanges="keyboardHidden|orientation">
@@ -95,6 +98,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.BoardDocumentCreateActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.JournalCreateActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>

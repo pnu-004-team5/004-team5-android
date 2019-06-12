@@ -2,16 +2,15 @@ package team5.class004.android.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+import androidx.annotation.NonNull;
+
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
@@ -20,11 +19,8 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
-import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.HashMap;
@@ -36,11 +32,8 @@ import retrofit2.Response;
 import team5.class004.android.GlobalApp;
 import team5.class004.android.R;
 import team5.class004.android.databinding.ActivityBoardDocumentCreateBinding;
-import team5.class004.android.databinding.ActivityHabitCreateBinding;
-import team5.class004.android.fragment.MyProfileFragment;
 import team5.class004.android.interfaces.AppConstants;
 import team5.class004.android.model.BoardDocumentItem;
-import team5.class004.android.model.UserItem;
 import team5.class004.android.utils.Utils;
 import team5.class004.android.widget.LoadingDialog;
 
@@ -50,6 +43,9 @@ public class BoardDocumentCreateActivity extends BaseActivity {
     ActivityBoardDocumentCreateBinding activityBinding;
     LoadingDialog dialog;
     Random rand = new Random();
+    boolean isUpdate = false;
+    String boardDocumentItemId;
+    String board = "total";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +53,22 @@ public class BoardDocumentCreateActivity extends BaseActivity {
         activityBinding = DataBindingUtil.setContentView(mActivity, R.layout.activity_board_document_create);
         dialog = new LoadingDialog(mActivity);
         Utils.getInstance().setActionbar(mActivity, "글 작성", true);
-
+        boardDocumentItemId = (String) getIntent().getSerializableExtra("boardDocumentItemId");
+        if(boardDocumentItemId != null) {
+            isUpdate = true;
+            activityBinding.etContent.setText((String) getIntent().getSerializableExtra("boardDocumentItemContent"));
+        }
         activityBinding.btnChooseVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ImagePicker.create(mActivity).includeVideo(true).start();
             }
         });
+        try {
+            board = getIntent().getStringExtra("board");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -85,28 +90,54 @@ public class BoardDocumentCreateActivity extends BaseActivity {
         params.put("userId", GlobalApp.getInstance().userItem.id);
         params.put("content", content);
         params.put("videoUrl", videoUrl);
+        params.put("board", board);
 //        params.put("regdate", activityBinding.fromDatePicker.getYear() + "-" + (activityBinding.fromDatePicker.getMonth()+1) + "-" + activityBinding.fromDatePicker.getDayOfMonth());
-        GlobalApp.getInstance().restClient.api().createBoardDocument(params).enqueue(new Callback<BoardDocumentItem>()
-        {
-            @Override
-            public void onResponse(@NonNull Call<BoardDocumentItem> call, @NonNull Response<BoardDocumentItem> response)
+        if(isUpdate) {
+            params.put("id", boardDocumentItemId);
+            GlobalApp.getInstance().restClient.api().updateBoardDocument(params).enqueue(new Callback<BoardDocumentItem>()
             {
-                if (response.isSuccessful() && response.body() != null)
+                @Override
+                public void onResponse(@NonNull Call<BoardDocumentItem> call, @NonNull Response<BoardDocumentItem> response)
                 {
-                    boardDocumentItem = response.body();
-                    finish();
+                    if (response.isSuccessful() && response.body() != null)
+                    {
+                        boardDocumentItem = response.body();
+                        finish();
+                    }
+                    dismisslDialog();
                 }
-                dismisslDialog();
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<BoardDocumentItem> call, @NonNull Throwable t)
+                @Override
+                public void onFailure(@NonNull Call<BoardDocumentItem> call, @NonNull Throwable t)
+                {
+                    dismisslDialog();
+                    finish();
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            GlobalApp.getInstance().restClient.api().createBoardDocument(params).enqueue(new Callback<BoardDocumentItem>()
             {
-                dismisslDialog();
-                finish();
-                t.printStackTrace();
-            }
-        });
+                @Override
+                public void onResponse(@NonNull Call<BoardDocumentItem> call, @NonNull Response<BoardDocumentItem> response)
+                {
+                    if (response.isSuccessful() && response.body() != null)
+                    {
+                        boardDocumentItem = response.body();
+                        finish();
+                    }
+                    dismisslDialog();
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<BoardDocumentItem> call, @NonNull Throwable t)
+                {
+                    dismisslDialog();
+                    finish();
+                    t.printStackTrace();
+                }
+            });
+        }
     }
 
     @Override
