@@ -2,15 +2,12 @@ package team5.class004.android.utils;
 
 
 import android.content.Context;
-import android.graphics.Color;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.lang.annotation.Target;
 
 import team5.class004.android.R;
 

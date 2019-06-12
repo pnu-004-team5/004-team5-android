@@ -2,17 +2,24 @@ package team5.class004.android.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
+
+import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
+
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
+
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -20,13 +27,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.json.JSONArray;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,7 +44,6 @@ import team5.class004.android.R;
 import team5.class004.android.activity.HabitDetailActivity;
 import team5.class004.android.databinding.FragmentHabitListBinding;
 import team5.class004.android.databinding.ItemHabitListBinding;
-import team5.class004.android.model.AbstractResponse;
 import team5.class004.android.model.HabitItem;
 import team5.class004.android.widget.LoadingDialog;
 import team5.class004.android.widget.SmoothCheckBox;
@@ -159,6 +166,11 @@ public class HabitListFragment extends Fragment implements SwipeRefreshLayout.On
                 java.util.Date date = calendar.getTime();
                 String today = (new SimpleDateFormat("yyyy-MM-dd").format(date));
 
+                int daysBetween = Days.daysBetween(new DateTime(habitItems.get(position).fromDate), new DateTime(habitItems.get(position).toDate)).getDays() + 1;
+                Log.e("aaaaaaaa", String.valueOf(completeDateJsonArr.length()));
+
+                int progress = (int)(((float)completeDateJsonArr.length() / daysBetween) * 100);
+                holder.itemBinding.tvHabitProgress.setText(String.valueOf(progress) + "%");
                 boolean found = false;
                 for(int i = 0; i < completeDateJsonArr.length(); i++) {
                     if(completeDateJsonArr.get(i).equals(today)) {
@@ -233,13 +245,13 @@ public class HabitListFragment extends Fragment implements SwipeRefreshLayout.On
                             adapter.notifyDataSetChanged();
                         }
                         dismisslDialog();
-                        Snackbar.make(fragmentBinding.getRoot(), isChecked ? "완료되었습니다." : "미완료되었습니다.", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(fragmentBinding.getRoot(), isChecked ? "완료되었습니다." : "미완료되었습니다.", Snackbar.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<HabitItem> call, @NonNull Throwable t)
                     {
-                        Snackbar.make(fragmentBinding.getRoot(), "오류가 발생하여 작업에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(fragmentBinding.getRoot(), "오류가 발생하여 작업에 실패했습니다.", Snackbar.LENGTH_SHORT).show();
                         dismisslDialog();
                         t.printStackTrace();
                     }
@@ -256,6 +268,26 @@ public class HabitListFragment extends Fragment implements SwipeRefreshLayout.On
             return false;
         }
 
+
+        @Override
+        public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                View itemView = viewHolder.itemView;
+
+                Paint p = new Paint();
+                p.setColor(Color.RED);
+                if (dX > 0) {
+                    c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
+                            (float) itemView.getBottom(), p);
+                } else {
+                    c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(),
+                            (float) itemView.getRight(), (float) itemView.getBottom(), p);
+                }
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+
+        }
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
             final int position = viewHolder.getAdapterPosition();

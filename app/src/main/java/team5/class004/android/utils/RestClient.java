@@ -15,7 +15,10 @@ import retrofit2.http.PUT;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 import team5.class004.android.model.AbstractResponse;
+import team5.class004.android.model.BoardCommentItem;
+import team5.class004.android.model.BoardDocumentItem;
 import team5.class004.android.model.HabitItem;
+import team5.class004.android.model.JournalItem;
 import team5.class004.android.model.UserItem;
 
 /**
@@ -56,5 +59,29 @@ public final class RestClient extends RestBaseClient
         Call<UserItem> updateUser(@QueryMap Map<String, String> params);
         @DELETE("/user")
         Call<UserItem> removeUser(@QueryMap Map<String, String> params);
+
+        @GET("/board/documents")
+        Call<ArrayList<BoardDocumentItem>> getBoardDocuments(@QueryMap Map<String, String> params);
+        @POST("/board/document")
+        Call<BoardDocumentItem> createBoardDocument(@QueryMap Map<String, String> params);
+        @DELETE("/board/document")
+        Call<BoardDocumentItem> deleteBoardDocument(@QueryMap Map<String, String> params);
+        @PUT("/board/document")
+        Call<BoardDocumentItem> updateBoardDocument(@QueryMap Map<String, String> params);
+
+        @GET("/board/comments")
+        Call<ArrayList<BoardCommentItem>> getBoardComments(@QueryMap Map<String, String> params);
+        @POST("/board/comment")
+        Call<BoardCommentItem> createBoardComment(@QueryMap Map<String, String> params);
+
+
+        @GET("/journals")
+        Call<ArrayList<JournalItem>> getJournals(@QueryMap Map<String, String> params);
+        @POST("/journal")
+        Call<JournalItem> createJournal(@QueryMap Map<String, String> params);
+        @PUT("/journal")
+        Call<JournalItem> updateJournal(@QueryMap Map<String, String> params);
+        @DELETE("/journal")
+        Call<JournalItem> deleteJournal(@QueryMap Map<String, String> params);
     }
 }

@@ -2,10 +2,10 @@ package team5.class004.android.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.util.Log;
+import androidx.annotation.NonNull;
+
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -39,6 +39,11 @@ public class LoginActivity extends BaseActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+//        if(!isValidEmail(activityBinding.etEmail.getText().toString())) {
+//            Toast.makeText(mActivity, "유효하지 않은 이메일", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
 
         activityBinding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +92,11 @@ public class LoginActivity extends BaseActivity {
                 finish();
             }
         });
+    }
+
+    public static boolean isValidEmail(String email) {
+        String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+        return email.matches(regex);
     }
 
     void showDialog() {

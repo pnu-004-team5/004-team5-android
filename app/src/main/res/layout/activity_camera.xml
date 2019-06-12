@@ -1,14 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.CameraActivity">
+    <!--<org.opencv.android.JavaCameraView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:id="@+id/activity_surface_view"/>-->
 
-    <org.opencv.android.JavaCameraView
+    <team5.class004.android.widget.CvCameraPreview
+        android:id="@+id/camera_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/activity_surface_view"/>
+        app:camera_type="back"
+        app:scale_type="full" />
 
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="32dp">
+        <ImageView
+            android:id="@+id/btn_rotate"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:clickable="true"
+            android:foreground="?selectableItemBackground"
+            android:background="@drawable/ic_rotate"/>
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_record"
+        android:scrollbars="none">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/margin_large">
+            <Button
+                android:id="@+id/btn_mask_default"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_margin="@dimen/margin_small"
+                android:background="@drawable/btn_default"
+                android:foreground="@drawable/black_alpha"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:text="기본"/>
+            <Button
+                android:id="@+id/btn_mask_dog"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_margin="@dimen/margin_small"
+                android:background="@drawable/btn_mask_dog"
+                android:foreground="@drawable/black_alpha"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:text="강아지"/>
+            <Button
+                android:id="@+id/btn_mask_mask"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_margin="@dimen/margin_small"
+                android:background="@drawable/btn_mask_mask"
+                android:foreground="@drawable/black_alpha"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:text="마스크"/>
+            <Button
+                android:id="@+id/btn_mask_gray"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_margin="@dimen/margin_small"
+                android:background="@drawable/btn_gray"
+                android:foreground="@drawable/black_alpha"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:text="흑백"/>
+            <Button
+                android:id="@+id/btn_mask_old"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_margin="@dimen/margin_small"
+                android:background="@drawable/btn_sepia"
+                android:foreground="@drawable/black_alpha"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:text="세피아"/>
+            <Button
+                android:id="@+id/btn_mask_warm"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_margin="@dimen/margin_small"
+                android:background="@drawable/btn_warm"
+                android:foreground="@drawable/black_alpha"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:text="따뜻하게"/>
+            <Button
+                android:id="@+id/btn_mask_blue"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_margin="@dimen/margin_small"
+                android:background="@drawable/btn_cold"
+                android:foreground="@drawable/black_alpha"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:text="차갑게"/>
+            <Button
+                android:id="@+id/btn_mask_red"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_margin="@dimen/margin_small"
+                android:background="@drawable/btn_red"
+                android:foreground="@drawable/black_alpha"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:text="붉게"/>
+            <Button
+                android:id="@+id/btn_mask_cartoon"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_margin="@dimen/margin_small"
+                android:background="@color/colorAccent"
+                android:textColor="@color/white"
+                android:text="그림"/>
+            <Button
+                android:id="@+id/btn_mask_strong"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_margin="@dimen/margin_small"
+                android:background="@color/colorAccent"
+                android:textColor="@color/white"
+                android:text="강렬"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <Button
+        android:id="@+id/btn_record"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="36dp"
+        android:background="@drawable/bg_green_circle_button"
+        android:textColor="@android:color/white" />
+
+</RelativeLayout>
+</layout>

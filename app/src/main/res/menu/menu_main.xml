@@ -9,13 +9,19 @@
         android:icon="@drawable/ic_clear_all"
         app:showAsAction="never" />
     <item
-        android:id="@+id/test1"
+        android:id="@+id/diary"
+        android:orderInCategory="100"
+        android:title="습관일기"
+        android:icon="@drawable/ic_book"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/explore"
         android:orderInCategory="100"
         android:title="@string/menu_main_explore"
         android:icon="@drawable/ic_explore"
         app:showAsAction="never" />
     <item
-        android:id="@+id/test2"
+        android:id="@+id/my_profile"
         android:orderInCategory="100"
         android:title="@string/menu_main_profile"
         android:icon="@drawable/ic_person"

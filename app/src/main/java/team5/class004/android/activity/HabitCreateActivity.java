@@ -1,18 +1,14 @@
 package team5.class004.android.activity;
 
 import android.app.Activity;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.util.Log;
+import androidx.annotation.NonNull;
+
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.CompoundButton;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 import retrofit2.Call;
