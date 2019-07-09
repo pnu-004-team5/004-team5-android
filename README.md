@@ -13,9 +13,7 @@ Backend 서버 코드는 [여기](https://github.com/pnu-004-team5/CreatingHabit
 ## 데모영상
 > 이미지 용량이 크므로 로딩이 오래 걸릴 수 있습니다 (약 13MB)
 
-<p align="center">
 ![Diagram](./misc/gethabit_demo.gif)
-</p>
 
 
 
