@@ -163,7 +163,8 @@ public class JournalListFragment extends Fragment implements SwipeRefreshLayout.
                 File file = new File(mActivity.getCacheDir(), journalItems.get(i).id + ".jpg");
                 image_files.add(file);
             }
-            madeVideoPath = softwareMakeVideo(image_files, Environment.getExternalStorageDirectory().toString(), String.valueOf(new Random().nextInt()));
+            madeVideoPath = softwareMakeVideo(image_files,
+                    Environment.getExternalStorageDirectory().toString(), String.valueOf(new Random().nextInt()));
             Snackbar.make(fragmentBinding.btnCreateVideo, "완료", Snackbar.LENGTH_SHORT).show();
 
             if(madeVideoPath != null)
@@ -225,6 +226,7 @@ public class JournalListFragment extends Fragment implements SwipeRefreshLayout.
             mActivity.sendBroadcast(intent);
         } catch (IOException e)
         {
+            Toast.makeText(mActivity,"타임라인 비디오 생성중 오류각 발생하였습니다.", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
         return file.getAbsolutePath();
