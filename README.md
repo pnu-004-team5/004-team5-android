@@ -11,6 +11,10 @@ Backend 서버 코드는 [여기](https://github.com/pnu-004-team5/CreatingHabit
 (이미지 용량이 커 로딩이 오래 걸릴 수 있습니다 약 13MB)
 
 ## 구성도
-![Alt text](./misc/gethabit_diagram.png)
+![Diagram](./misc/gethabit_diagram.png)
+
+## 데모영상
+![Diagram](./misc/gethabit_demo.gif)
+
 
 
