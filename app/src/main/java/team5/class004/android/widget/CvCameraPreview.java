@@ -290,15 +290,13 @@ public class CvCameraPreview extends SurfaceView implements SurfaceHolder.Callba
         /* nothing to do */
     }
 
-    // NOTE: The order of bitmap constructor and camera connection is important for android 4.1.x
-    // Bitmap must be constructed before surface
     private void onEnterStartedState() {
         Log.d(LOG_TAG, "call onEnterStartedState");
         /* Connect camera */
         if (!connectCamera()) {
             AlertDialog ad = new AlertDialog.Builder(getContext()).create();
             ad.setCancelable(false); // This blocks the 'BACK' button
-            ad.setMessage("It seems that you device does not support camera (or it is locked). Application will be closed.");
+            ad.setMessage("카메라 권한을 허용해주세요");
             ad.setButton(DialogInterface.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();

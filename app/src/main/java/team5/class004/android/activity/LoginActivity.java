@@ -40,10 +40,11 @@ public class LoginActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-//        if(!isValidEmail(activityBinding.etEmail.getText().toString())) {
-//            Toast.makeText(mActivity, "유효하지 않은 이메일", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
+        if(!isValidEmail(activityBinding.etEmail.getText().toString())) {
+            Toast.makeText(mActivity, "유효하지 않은 이메일", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        isValidPassword("11");
 
         activityBinding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +97,11 @@ public class LoginActivity extends BaseActivity {
 
     public static boolean isValidEmail(String email) {
         String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+        return email.matches(regex);
+    }
+
+    public static boolean isValidPassword(String email) {
+        String regex = "([A-Za-z\\*\\&\\^\\%\\$\\#\\@\\!\\~]{1,})\\w+";
         return email.matches(regex);
     }
 
