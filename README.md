@@ -7,19 +7,22 @@
 - 동영상 업로드 및 재생
 - 사진파일을 모아 타임라인 동영상 생성
 
-## 1. 데모영상
+## 1. 사용된 자원
+OpenCV, JCodec, PostgreSQL, Java Spring, AWS S3
+
+## 2. 데모영상
 > 이미지 용량이 크므로 로딩이 오래 걸릴 수 있습니다 (약 13MB)
   
 ![Demo](./misc/gethabit_demo.gif)
 
 Backend 서버 코드는 [여기](https://github.com/pnu-004-team5/CreatingHabits)에 있습니다.
 
-## 2. 구성도
+## 3. 구성도
 ![Diagram](./misc/gethabit_diagram.png)
 
-## 3. 설정
+## 4. 설정
   
-#### 3.1 상수 설정
+#### 4.1 상수 설정
 > app/java/[package_name]/interface/AppConstants.java 
 ```java
 String API_URL = "http://[[백엔드 서버 주소]]:8080"; //ex) http://10.0.2.2:8080; AVD로 실행하고 백엔드서버를 로컬로 실행할때
