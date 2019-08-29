@@ -8,7 +8,11 @@
 - 사진파일을 모아 타임라인 동영상 생성
 
 ## 1. 사용된 자원
-OpenCV, JCodec, PostgreSQL, Java Spring, AWS S3
+OpenCV v4.1
+JCodec v0.1.9
+PostgreSQL
+Java Spring v2.1.4
+AWS S3
 
 ## 2. 데모영상
 > 이미지 용량이 크므로 로딩이 오래 걸릴 수 있습니다 (약 13MB)
