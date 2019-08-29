@@ -13,6 +13,7 @@
 - PostgreSQL
 - Java Spring v2.1.4
 - AWS S3
+- RestFul API
 
 ## 2. 데모영상
 > 이미지 용량이 크므로 로딩이 오래 걸릴 수 있습니다 (약 13MB)
